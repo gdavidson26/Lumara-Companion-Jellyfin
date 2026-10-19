@@ -18,20 +18,21 @@ on TVs, phones and browsers only ever talk to your Jellyfin server.
 
 You need Jellyfin **10.11.x** or **12.x** and an admin account.
 
-1. In Jellyfin, open **Dashboard → Plugins → Repositories** (on 10.11: **Dashboard → Plugins →
-   Catalog → ⚙ Settings → Repositories**) and add:
+1. In Jellyfin, open **Dashboard → Plugins → Manage Repositories**, select **New Repository**
+   and add:
 
    | Name | Repository URL |
    |---|---|
    | Lumara | `https://raw.githubusercontent.com/gdavidson26/Lumara-Companion-Jellyfin/main/manifest.json` |
 
-2. Open the **Catalog**, find **Lumara Companion** under General, and install the newest version.
+2. Back on **Plugins**, open the **Available** tab, select **Lumara Companion** (under General)
+   and install the newest version.
    Jellyfin picks the build for your server version by itself.
 3. **Restart Jellyfin.**
-4. Open **Dashboard → Plugins → Lumara Companion** and choose how Lumara Web should appear (see
+4. Open **Dashboard → Plugins → Lumara Companion → Settings** and choose how Lumara Web should appear (see
    below). Nothing changes for your users until you do.
 
-Updates appear in the same catalogue, and Jellyfin can install them automatically.
+Updates show up on the same Plugins page, and Jellyfin can install them automatically.
 
 **Manual install:** download the zip for your server from
 [Releases](https://github.com/gdavidson26/Lumara-Companion-Jellyfin/releases)
@@ -130,8 +131,8 @@ rather than an issue.
 
 ## Troubleshooting
 
-- **The plugin doesn't appear in the catalogue:** check the repository URL, then reload the
-  Catalog page. Jellyfin only lists the build that matches its version (10.11 or 12).
+- **The plugin isn't under Available:** check the repository URL, then reload the Plugins
+  page. Jellyfin only lists the build that matches its version (10.11 or 12).
 - **"Restart" next to the plugin:** Jellyfin needs a restart after installing or updating.
 - **Lumara Web doesn't open:** the web mode is Off by default. The standard app is always at
   `/web/?stock=1`.
