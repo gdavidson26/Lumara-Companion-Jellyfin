@@ -126,7 +126,7 @@ public sealed class ServiceClient
         if (kind == IntegrationKind.QBittorrent && first.Status == 403)
         {
             // The saved session expired: sign in again and retry once.
-            QbSessions.TryRemove(QbSessionKey(url!, user!), out _);
+            QbSessions.TryRemove(QbSessionKey(url!, user!, _integrations.Revision), out _);
             return await SendOnce(kind, method, url!, key!, user, path, jsonBody, headers, cancellationToken).ConfigureAwait(false);
         }
 
@@ -213,7 +213,9 @@ public sealed class ServiceClient
         _ => null,
     };
 
-    private static string QbSessionKey(string url, string user) => url + "\n" + user;
+    // The settings revision is part of the key: a new password (or address)
+    // signs in again instead of reusing the old session.
+    private static string QbSessionKey(string url, string user, int revision) => url + "\n" + user + "\n" + revision.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
     private static string AppendQuery(string target, string name, string value) =>
         target + (target.Contains('?', StringComparison.Ordinal) ? "&" : "?") + name + "=" + Uri.EscapeDataString(value);
@@ -308,7 +310,7 @@ public sealed class ServiceClient
     // password still answers 200, with the body "Fails.", so the cookie is the test.
     private async Task<string?> QbSession(string url, string user, string password, CancellationToken cancellationToken)
     {
-        var cacheKey = QbSessionKey(url, user);
+        var cacheKey = QbSessionKey(url, user, _integrations.Revision);
         if (QbSessions.TryGetValue(cacheKey, out var sid))
         {
             return sid;

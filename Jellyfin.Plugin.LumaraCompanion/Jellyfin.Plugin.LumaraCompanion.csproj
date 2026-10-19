@@ -19,7 +19,7 @@
          major it's built for (11 = 10.11, 12 = 12.x): Jellyfin installs the
          highest compatible version from a repository, so the 12 build must
          outrank the 10.11 build or a 12 server could pick the wrong DLL. -->
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionPrefix>1.0.1</VersionPrefix>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

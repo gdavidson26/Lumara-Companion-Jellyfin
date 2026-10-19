@@ -85,6 +85,7 @@ public sealed class IntegrationService
     private readonly Func<PluginConfiguration> _config;
     private readonly Action _save;
     private readonly HttpClient? _http;
+    private int _revision;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="IntegrationService"/> class.
@@ -105,6 +106,13 @@ public sealed class IntegrationService
         _save = save;
         _http = http;
     }
+
+    /// <summary>
+    /// Gets a number that changes whenever an integration is saved or removed.
+    /// Caches of service replies include it in their keys, so a new address,
+    /// key or password takes effect at once instead of after the cache expires.
+    /// </summary>
+    public int Revision => Volatile.Read(ref _revision);
 
     /// <summary>
     /// Whether an integration needs a base URL (API-key-only services don't).
@@ -206,6 +214,7 @@ public sealed class IntegrationService
             entry.LinkUrl = linkUrl.Trim().TrimEnd('/');
         }
 
+        Interlocked.Increment(ref _revision);
         _save();
     }
 
@@ -222,6 +231,7 @@ public sealed class IntegrationService
             list.Remove(e);
         }
 
+        Interlocked.Increment(ref _revision);
         _save();
     }
 

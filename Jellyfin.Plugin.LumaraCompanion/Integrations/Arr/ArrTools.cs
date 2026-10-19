@@ -433,7 +433,7 @@ public sealed class ArrTools
 
     private async Task<Dictionary<long, string>> Names(IntegrationKind kind, string path, CancellationToken ct, string field = "name")
     {
-        var key = kind + path;
+        var key = kind + path + "#" + _client.Integrations.Revision.ToString(CultureInfo.InvariantCulture);
         if (_names.TryGetValue(key, out var hit) && DateTime.UtcNow - hit.At < ProfilesFor)
         {
             return hit.Map;

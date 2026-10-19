@@ -130,7 +130,10 @@ public sealed class CalendarService
             end = start.AddDays(MaxDays);
         }
 
-        var cacheKey = start.ToString("yyyyMMdd", CultureInfo.InvariantCulture) + end.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+        // The settings revision is part of the key, so adding or changing a
+        // source shows up at once rather than after the cache expires.
+        var cacheKey = _client.Integrations.Revision.ToString(CultureInfo.InvariantCulture) + ":"
+            + start.ToString("yyyyMMdd", CultureInfo.InvariantCulture) + end.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
         if (!_cache.TryGetValue(cacheKey, out var hit) || DateTime.UtcNow - hit.At > CacheFor)
         {
             var rows = new List<(CalendarEntry, string?, string, long?, long?)>();

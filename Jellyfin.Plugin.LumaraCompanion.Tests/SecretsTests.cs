@@ -47,6 +47,20 @@ public sealed class SecretsTests : IDisposable
         new(Protector(), () => _config, () => _saves++, handler is null ? null : new HttpClient(handler));
 
     [Fact]
+    public void RevisionChangesOnEverySaveAndRemoval()
+    {
+        // Caches key on it, so a new address, key or password applies at once.
+        var s = Service();
+        var r0 = s.Revision;
+        s.Set(IntegrationKind.QBittorrent, Url, Key, "admin");
+        var r1 = s.Revision;
+        s.Set(IntegrationKind.QBittorrent, null, "new-password");
+        var r2 = s.Revision;
+        s.Clear(IntegrationKind.QBittorrent);
+        Assert.True(r0 < r1 && r1 < r2 && r2 < s.Revision);
+    }
+
+    [Fact]
     public void ProtectRoundTripsAndHidesThePlaintext()
     {
         var p = Protector();

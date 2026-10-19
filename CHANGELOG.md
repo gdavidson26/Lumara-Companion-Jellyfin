@@ -5,6 +5,13 @@ All notable changes to Lumara Companion for Jellyfin, newest first. Versions fol
 [GitHub Releases](https://github.com/gdavidson26/Lumara-Companion-Jellyfin/releases) is tagged
 `v<version>` and has one zip per Jellyfin version (`.12` for Jellyfin 12, `.11` for 10.11).
 
+## 1.0.1 (2026-10-19)
+
+### Fixes
+
+- **Integration changes:** a new address, API key or password now takes effect straight away; the calendar and app details no longer show results from the old settings for a few minutes.
+- **qBittorrent:** changing the password signs in again, so a wrong password is reported instead of the old session being reused.
+
 ## 1.0.0 (2026-10-19)
 
 ### Features
