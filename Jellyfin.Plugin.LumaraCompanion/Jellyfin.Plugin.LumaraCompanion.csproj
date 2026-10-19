@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Lumara Companion for Jellyfin. GPL-3.0 (see ../LICENSE): Jellyfin plugins link
+    Jellyfin's GPL libraries. NEVER copy code from Lumara's proprietary Rust crates
+    into this project, and never embed the Lumara Web bundle into this DLL; the
+    plugin serves it as separate files from a `lumara-web` folder next to the DLL.
+
+    Two builds from one source:
+      net10.0 -> Jellyfin 12.x  (Jellyfin.Controller 12.2.0)
+      net9.0  -> Jellyfin 10.11 (Jellyfin.Controller 10.11.5)
+    A plugin compiled for one server ABI doesn't load on the other.
+  -->
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net9.0</TargetFrameworks>
+    <RootNamespace>Jellyfin.Plugin.LumaraCompanion</RootNamespace>
+    <AssemblyName>Jellyfin.Plugin.LumaraCompanion</AssemblyName>
+    <!-- Release version (major.minor.patch). The fourth part is the Jellyfin
+         major it's built for (11 = 10.11, 12 = 12.x): Jellyfin installs the
+         highest compatible version from a repository, so the 12 build must
+         outrank the 10.11 build or a 12 server could pick the wrong DLL. -->
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <!-- CA1848 (LoggerMessage delegates) adds noise for a handful of log lines. -->
+    <NoWarn>$(NoWarn);CA1848</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <Version>$(VersionPrefix).12</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <Version>$(VersionPrefix).11</Version>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageReference Include="Jellyfin.Controller" Version="12.2.0">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Jellyfin.Model" Version="12.2.0">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="Jellyfin.Controller" Version="10.11.5">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Jellyfin.Model" Version="10.11.5">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ASP.NET Core (controllers, middleware, Data Protection) is provided by the server. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\configPage.html" />
+    <EmbeddedResource Include="Web\stock-button.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Jellyfin.Plugin.LumaraCompanion.Tests" />
+  </ItemGroup>
+
+</Project>

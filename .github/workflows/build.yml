@@ -1,0 +1,46 @@
+# Builds and tests Lumara Companion (Jellyfin 12 and 10.11) on every push and
+# pull request. Release zips are built elsewhere (they also carry the separate
+# Lumara Web files) and attached to GitHub Releases by the maintainer.
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: |
+            9.0.x
+            10.0.x
+      - name: Build (Jellyfin 12 and 10.11)
+        run: dotnet build LumaraCompanion.slnx -c Release
+      - name: Test
+        run: dotnet test LumaraCompanion.slnx -c Release --no-build
+      - name: Check the plugin repository manifest
+        run: |
+          python3 - <<'PY'
+          import json
+          m = json.load(open("manifest.json"))
+          plugin = m[0]
+          assert plugin["guid"] == "f71150e9-169e-45da-87d0-68dee97fd2e3"
+          for v in plugin["versions"]:
+              for key in ("version", "targetAbi", "sourceUrl", "checksum"):
+                  assert v.get(key), (v, key)
+          print(len(plugin["versions"]), "versions OK")
+          PY

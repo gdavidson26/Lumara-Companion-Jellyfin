@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<!--
+  Lumara Companion settings page (Dashboard > Plugins > Lumara Companion).
+  Licensed under the GNU General Public License v3.0 (part of the GPL plugin).
+
+  Secrets are write-only from this page: saved URLs and keys are never sent back
+  to the browser. The page only learns whether each integration is set up.
+  All text from the server is inserted with textContent, never innerHTML.
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Lumara Companion</title>
+</head>
+<body>
+<div id="LumaraCompanionPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
+    <div data-role="content">
+        <div class="content-primary">
+            <h2 class="sectionTitle">Lumara Companion</h2>
+
+            <div class="verticalSection">
+                <h3 class="sectionTitle">Web app</h3>
+                <div class="selectContainer">
+                    <label class="selectLabel" for="lumaraWebMode">Which web app opens at this server's address</label>
+                    <select is="emby-select" id="lumaraWebMode" class="emby-select-withcolor emby-select">
+                        <option value="Off">Off: only the standard Jellyfin web app</option>
+                        <option value="SideBySide">Side by side: Lumara at /Lumara/Web/, plus a button in the standard app</option>
+                        <option value="Replace">Replace: Lumara opens by default; anyone can switch back to the standard app</option>
+                    </select>
+                    <div class="fieldDescription" id="lumaraWebHint"></div>
+                </div>
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
+                        <input is="emby-checkbox" type="checkbox" id="lumaraStockButton">
+                        <span>Show a Lumara button in the standard web app</span>
+                    </label>
+                    <div class="fieldDescription">The standard app is always available at <code>/web/?stock=1</code>, whatever you choose here.</div>
+                </div>
+                <button is="emby-button" type="button" id="lumaraSaveWeb" class="raised button-submit block"><span>Save web app settings</span></button>
+            </div>
+
+            <div class="verticalSection">
+                <h3 class="sectionTitle">Maintenance notice</h3>
+                <p class="fieldDescription">Lumara apps show this as a banner, with a countdown before it starts. Times are in this browser's time zone.</p>
+                <div class="checkboxContainer">
+                    <label class="emby-checkbox-label">
+                        <input is="emby-checkbox" type="checkbox" id="lumaraMaintOn">
+                        <span>Show the notice</span>
+                    </label>
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="lumaraMaintMessage">Message</label>
+                    <input is="emby-input" type="text" id="lumaraMaintMessage" maxlength="300" placeholder="Updating the server, back by 11 pm.">
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="lumaraMaintStart">Starts (empty: right away)</label>
+                    <input is="emby-input" type="datetime-local" id="lumaraMaintStart">
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="lumaraMaintEnd">Ends (empty: when you switch it off)</label>
+                    <input is="emby-input" type="datetime-local" id="lumaraMaintEnd">
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="lumaraMaintAnnounce">Show the countdown this many minutes before</label>
+                    <input is="emby-input" type="number" id="lumaraMaintAnnounce" min="0" max="10080" step="5">
+                </div>
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
+                        <input is="emby-checkbox" type="checkbox" id="lumaraMaintLock">
+                        <span>Only admins can use the server while it's on</span>
+                    </label>
+                    <div class="fieldDescription">Everyone else can still sign in and sees the notice, but can't browse or play until it ends. Admins are never locked out.</div>
+                </div>
+                <div class="fieldDescription" id="lumaraMaintResult"></div>
+                <button is="emby-button" type="button" id="lumaraSaveMaint" class="raised button-submit block"><span>Save maintenance notice</span></button>
+            </div>
+
+            <div class="verticalSection">
+                <h3 class="sectionTitle">Branding</h3>
+                <p class="fieldDescription">How Lumara apps present this server on the sign-in screen. Leave a field empty for Lumara's default.</p>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="lumaraBrandName">Server name</label>
+                    <input is="emby-input" type="text" id="lumaraBrandName" maxlength="40">
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="lumaraBrandMessage">Sign-in message</label>
+                    <input is="emby-input" type="text" id="lumaraBrandMessage" maxlength="300" placeholder="Ask Sam for an account.">
+                </div>
+                <div class="selectContainer">
+                    <label class="selectLabel" for="lumaraBrandAccent">Accent colour (for people who haven't picked their own)</label>
+                    <select is="emby-select" id="lumaraBrandAccent" class="emby-select-withcolor emby-select">
+                        <option value="">Lumara default</option>
+                        <option value="#F2B66D">Lumen amber</option>
+                        <option value="#F28C6D">Ember coral</option>
+                        <option value="#E8C26A">Soft gold</option>
+                        <option value="#8ED1B4">Mint</option>
+                        <option value="#7DB8E8">Sky</option>
+                        <option value="#B9A4E8">Lilac</option>
+                        <option value="#EDEBE6">Pearl</option>
+                    </select>
+                </div>
+                <button is="emby-button" type="button" id="lumaraSaveBrand" class="raised button-submit block"><span>Save branding</span></button>
+                <div style="margin-top:1.5em;">
+                    <div class="inputLabel">Logo (PNG, JPEG or WebP, up to 512 KB)</div>
+                    <img id="lumaraLogoPreview" alt="Current logo" style="display:none;max-height:64px;max-width:240px;margin:.5em 0;">
+                    <div id="lumaraLogoNone" class="fieldDescription">No logo yet.</div>
+                    <input type="file" id="lumaraLogoFile" accept="image/png,image/jpeg,image/webp" style="margin:.5em 0;display:block;">
+                    <button is="emby-button" type="button" id="lumaraLogoUpload" class="raised emby-button"><span>Upload logo</span></button>
+                    <button is="emby-button" type="button" id="lumaraLogoRemove" class="raised emby-button"><span>Remove logo</span></button>
+                    <div class="fieldDescription" id="lumaraLogoResult"></div>
+                </div>
+            </div>
+
+            <div class="verticalSection">
+                <h3 class="sectionTitle">Integrations</h3>
+                <p class="fieldDescription">Addresses and API keys are encrypted and kept on this server. They're never sent to anyone's TV, phone or browser, including this page. Lumara apps reach these services through the server.</p>
+                <div id="lumaraIntegrations"></div>
+            </div>
+
+            <div class="verticalSection">
+                <h3 class="sectionTitle">Requests, calendar and tags</h3>
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
+                        <input is="emby-checkbox" type="checkbox" id="lumaraAutoSeason">
+                        <span>Request the next season when someone finishes a show's newest season</span>
+                    </label>
+                    <div class="fieldDescription">Made in Seerr as that person, so their Seerr permissions and request limits apply. Anyone can turn this off for themselves in Lumara.</div>
+                </div>
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
+                        <input is="emby-checkbox" type="checkbox" id="lumaraAutoMovie">
+                        <span>Request the next film in a collection when someone finishes one</span>
+                    </label>
+                    <div class="fieldDescription">Only films that are already out and not in the library or requested yet.</div>
+                </div>
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
+                        <input is="emby-checkbox" type="checkbox" id="lumaraCalendarAll">
+                        <span>Show the calendar to everyone, not just admins</span>
+                    </label>
+                    <div class="fieldDescription">Upcoming episodes, films and albums from Sonarr, Radarr, Lidarr and Shoko. Parental limits still apply.</div>
+                </div>
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
+                        <input is="emby-checkbox" type="checkbox" id="lumaraCopyTags">
+                        <span>Copy Sonarr, Radarr and Lidarr tags onto matching titles every night</span>
+                    </label>
+                    <div class="fieldDescription">Copied tags start with the prefix below, so tags you added yourself are never changed. Runs as the scheduled task "Copy Sonarr, Radarr and Lidarr tags".</div>
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="lumaraTagPrefix">Prefix for copied tags</label>
+                    <input is="emby-input" type="text" id="lumaraTagPrefix" maxlength="20">
+                </div>
+                <div class="fieldDescription" id="lumaraRequestsResult"></div>
+                <button is="emby-button" type="button" id="lumaraSaveRequests" class="raised button-submit block"><span>Save these settings</span></button>
+                <button is="emby-button" type="button" id="lumaraTagsNow" class="raised emby-button block"><span>Copy tags now</span></button>
+            </div>
+
+            <div class="verticalSection" id="lumaraSeerrUsersSection" style="display:none;">
+                <h3 class="sectionTitle">Seerr accounts</h3>
+                <p class="fieldDescription">Lumara requests use each person's own Seerr account. People without one can't request from Lumara until they're added here (Seerr gives them its default permissions).</p>
+                <div id="lumaraSeerrUsers"></div>
+                <div class="fieldDescription" id="lumaraSeerrUsersResult"></div>
+                <button is="emby-button" type="button" id="lumaraImportUsers" class="raised emby-button block"><span>Add the selected people to Seerr</span></button>
+            </div>
+
+            <div class="verticalSection">
+                <h3 class="sectionTitle">Default Lumara settings</h3>
+                <p class="fieldDescription">Optional. A JSON object of settings every Lumara app starts from, before each person's own choices. Leave as {} for none.</p>
+                <textarea id="lumaraDefaults" rows="6" style="width:100%;font-family:monospace;"></textarea>
+                <button is="emby-button" type="button" id="lumaraSaveDefaults" class="raised button-submit block"><span>Save defaults</span></button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        (function () {
+            var pluginId = 'f71150e9-169e-45da-87d0-68dee97fd2e3';
+            var page = document.querySelector('#LumaraCompanionPage');
+            var labels = {
+                Seerr: 'Seerr', Radarr: 'Radarr', Sonarr: 'Sonarr', Lidarr: 'Lidarr', Bazarr: 'Bazarr',
+                Prowlarr: 'Prowlarr', Shoko: 'Shoko', Jellystat: 'Jellystat', Tmdb: 'TMDB', MdbList: 'MDBList',
+                QBittorrent: 'qBittorrent', Sabnzbd: 'SABnzbd'
+            };
+            // What each one is for, in one line.
+            var uses = {
+                Seerr: 'Requests, discovery, problem reports and the watchlist. API key: Seerr > Settings > General.',
+                Radarr: 'Film calendar, downloads, tags and per-title tools for admins.',
+                Sonarr: 'Episode calendar, downloads, tags and per-title tools for admins.',
+                Lidarr: 'Album calendar, downloads and tags.',
+                Bazarr: 'Missing subtitles and subtitle searches on title pages (admins).',
+                Prowlarr: 'Indexer health on the Server page (admins).',
+                Shoko: 'Anime episodes on the calendar.',
+                Jellystat: 'Most watched titles and most active people on the Server page (admins).',
+                Tmdb: 'Ratings and where to watch on title pages.',
+                MdbList: 'Ratings from IMDb, Rotten Tomatoes, Metacritic and more.',
+                QBittorrent: 'Downloads the *arr apps don\u2019t know about, and download speed (admins). Uses its web UI login.',
+                Sabnzbd: 'Downloads the *arr apps don\u2019t know about, and download speed (admins).'
+            };
+            // Integrations whose title pages can link to the app itself.
+            var linkable = { Radarr: true, Sonarr: true, Bazarr: true };
+            // Example addresses with each service's default port.
+            var examples = {
+                Seerr: 'http://seerr:5055', Radarr: 'http://radarr:7878', Sonarr: 'http://sonarr:8989',
+                Lidarr: 'http://lidarr:8686', Bazarr: 'http://bazarr:6767', Prowlarr: 'http://prowlarr:9696',
+                Shoko: 'http://shoko:8111', Jellystat: 'http://jellystat:3000',
+                QBittorrent: 'http://qbittorrent:8080', Sabnzbd: 'http://sabnzbd:8080'
+            };
+            var hints = {
+                Off: 'Nothing changes for your users.',
+                SideBySide: 'People keep the standard app and can open Lumara from its header.',
+                Replace: 'Lumara opens at the server address. If the Lumara files are missing, the standard app opens instead.'
+            };
+
+            function json(method, path, body) {
+                return ApiClient.ajax({
+                    type: method,
+                    url: ApiClient.getUrl(path),
+                    data: body === undefined ? undefined : JSON.stringify(body),
+                    contentType: 'application/json',
+                    dataType: method === 'GET' || path.indexOf('/Test') > 0 ? 'json' : undefined
+                });
+            }
+
+            // Jellyfin's styled text box. Customized built-ins only upgrade when
+            // parsed or created with `is`, and Jellyfin's web-components polyfill
+            // breaks createElement's options argument, so parse a fixed snippet.
+            // Nothing from the server goes into this markup.
+            function input(type, placeholder) {
+                var holder = document.createElement('div');
+                holder.innerHTML = '<input is="emby-input" class="emby-input">';
+                var i = holder.firstChild;
+                i.type = type;
+                i.placeholder = placeholder;
+                i.autocomplete = 'off';
+                i.style.cssText = 'width:100%;margin-top:.5em;';
+                return i;
+            }
+
+            function el(tag, cls, text) {
+                var e = document.createElement(tag);
+                if (cls) e.className = cls;
+                if (text !== undefined) e.textContent = text;
+                return e;
+            }
+
+            function renderIntegrations(list) {
+                var host = page.querySelector('#lumaraIntegrations');
+                host.textContent = '';
+                list.forEach(function (s) {
+                    var row = el('div', 'paperList');
+                    row.style.cssText = 'padding:1em;margin-bottom:.75em;';
+                    var head = el('div');
+                    head.style.cssText = 'display:flex;justify-content:space-between;align-items:center;';
+                    head.appendChild(el('strong', '', labels[s.Kind] || s.Kind));
+                    var configured = s.ApiKeyConfigured && (!s.NeedsUrl || s.UrlConfigured) && (!s.NeedsUsername || s.UsernameConfigured);
+                    head.appendChild(el('span', 'fieldDescription', configured ? 'Configured' : 'Not set up'));
+                    row.appendChild(head);
+                    if (uses[s.Kind]) row.appendChild(el('div', 'fieldDescription', uses[s.Kind]));
+
+                    var url = null;
+                    if (s.NeedsUrl) {
+                        url = input('url', s.UrlConfigured ? 'Address saved (type to replace)' : examples[s.Kind] || 'http://');
+                        row.appendChild(url);
+                    }
+                    var user = null;
+                    if (s.NeedsUsername) {
+                        user = input('text', s.UsernameConfigured ? 'User name saved (type to replace)' : 'User name');
+                        row.appendChild(user);
+                    }
+                    var key = input('password', s.NeedsUsername
+                        ? (s.ApiKeyConfigured ? 'Password saved (type to replace)' : 'Password')
+                        : (s.ApiKeyConfigured ? 'API key saved (type to replace)' : 'API key'));
+                    row.appendChild(key);
+                    var link = null;
+                    if (linkable[s.Kind]) {
+                        // Not a secret: admins see it as a link on title pages.
+                        link = input('url', 'Address you open it at in a browser, for links (optional)');
+                        link.value = s.LinkUrl || '';
+                        row.appendChild(link);
+                    }
+
+                    var result = el('div', 'fieldDescription');
+                    var actions = el('div');
+                    actions.style.cssText = 'margin-top:.5em;';
+                    var save = el('button', 'raised emby-button', 'Save');
+                    save.type = 'button';
+                    save.addEventListener('click', function () {
+                        var body = {};
+                        if (url && url.value.trim()) body.Url = url.value.trim();
+                        if (key.value.trim()) body.ApiKey = key.value.trim();
+                        if (user && user.value.trim()) body.Username = user.value.trim();
+                        if (link) body.LinkUrl = link.value.trim();
+                        json('PUT', 'Lumara/Integrations/' + s.Kind, body).then(function () {
+                            key.value = ''; if (url) url.value = ''; if (user) user.value = '';
+                            load();
+                        }, function () { result.textContent = 'Couldn’t save. Check the address starts with http:// or https://.'; });
+                    });
+                    var test = el('button', 'raised emby-button', 'Test connection');
+                    test.type = 'button';
+                    test.addEventListener('click', function () {
+                        result.textContent = 'Testing…';
+                        json('POST', 'Lumara/Integrations/' + s.Kind + '/Test').then(function (r) {
+                            result.textContent = r.Message;
+                        }, function () { result.textContent = 'Test failed to run.'; });
+                    });
+                    var clear = el('button', 'raised emby-button', 'Remove');
+                    clear.type = 'button';
+                    clear.addEventListener('click', function () {
+                        if (!window.confirm('Remove the saved ' + (labels[s.Kind] || s.Kind) + ' settings?')) return;
+                        json('DELETE', 'Lumara/Integrations/' + s.Kind).then(load);
+                    });
+                    actions.appendChild(save);
+                    if (configured) { actions.appendChild(test); actions.appendChild(clear); }
+                    row.appendChild(actions);
+                    row.appendChild(result);
+                    host.appendChild(row);
+                });
+            }
+
+            // Stored times are UTC; datetime-local inputs speak local time.
+            function toLocalInput(utc) {
+                if (!utc) return '';
+                var d = new Date(/[zZ]|[+-]\d\d:\d\d$/.test(utc) ? utc : utc + 'Z');
+                if (isNaN(d.getTime())) return '';
+                var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+                return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+            }
+            function fromLocalInput(v) { return v ? new Date(v).toISOString() : null; }
+
+            function showLogo(version) {
+                var img = page.querySelector('#lumaraLogoPreview');
+                var none = page.querySelector('#lumaraLogoNone');
+                if (version > 0) {
+                    img.src = ApiClient.getUrl('Lumara/Branding/Logo') + '?v=' + version;
+                    img.style.display = 'block'; none.style.display = 'none';
+                } else {
+                    img.removeAttribute('src');
+                    img.style.display = 'none'; none.style.display = 'block';
+                }
+            }
+
+            function loadStatus() {
+                return json('GET', 'Lumara/Info').then(function (info) {
+                    showLogo(info.Branding ? info.Branding.LogoVersion : 0);
+                    var m = info.Maintenance || {};
+                    page.querySelector('#lumaraMaintResult').textContent =
+                        m.State === 'Active' ? 'The notice is showing now.' :
+                        m.State === 'Scheduled' ? 'The countdown is showing now.' : 'Nothing is showing right now.';
+                });
+            }
+
+            function load() {
+                Dashboard.showLoadingMsg();
+                Promise.all([
+                    ApiClient.getPluginConfiguration(pluginId),
+                    json('GET', 'Lumara/Integrations')
+                ]).then(function (r) {
+                    var req = r[0].Requests || {};
+                    page.querySelector('#lumaraAutoSeason').checked = !!req.AutoRequestNextSeason;
+                    page.querySelector('#lumaraAutoMovie').checked = !!req.AutoRequestNextMovie;
+                    page.querySelector('#lumaraCalendarAll').checked = req.CalendarForEveryone !== false;
+                    page.querySelector('#lumaraCopyTags').checked = !!req.CopyArrTags;
+                    page.querySelector('#lumaraTagPrefix').value = req.TagPrefix === undefined ? 'arr: ' : req.TagPrefix;
+                    var seerr = r[1].filter(function (x) { return x.Kind === 'Seerr'; })[0];
+                    var seerrOn = seerr && seerr.UrlConfigured && seerr.ApiKeyConfigured;
+                    page.querySelector('#lumaraSeerrUsersSection').style.display = seerrOn ? '' : 'none';
+                    if (seerrOn) loadSeerrUsers();
+                    var cfg = r[0];
+                    var mode = page.querySelector('#lumaraWebMode');
+                    mode.value = cfg.WebMode || 'Off';
+                    page.querySelector('#lumaraWebHint').textContent = hints[mode.value] || '';
+                    page.querySelector('#lumaraStockButton').checked = cfg.ShowStockButton !== false;
+                    page.querySelector('#lumaraDefaults').value = cfg.DefaultSettingsJson || '{}';
+                    renderIntegrations(r[1]);
+                    var m = cfg.Maintenance || {};
+                    page.querySelector('#lumaraMaintOn').checked = !!m.Enabled;
+                    page.querySelector('#lumaraMaintMessage').value = m.Message || '';
+                    page.querySelector('#lumaraMaintStart').value = toLocalInput(m.StartUtc);
+                    page.querySelector('#lumaraMaintEnd').value = toLocalInput(m.EndUtc);
+                    page.querySelector('#lumaraMaintAnnounce').value = m.AnnounceMinutes === undefined ? 60 : m.AnnounceMinutes;
+                    page.querySelector('#lumaraMaintLock').checked = !!m.LockOut;
+                    var b = cfg.Branding || {};
+                    page.querySelector('#lumaraBrandName').value = b.Name || '';
+                    page.querySelector('#lumaraBrandMessage').value = b.Message || '';
+                    page.querySelector('#lumaraBrandAccent').value = b.Accent || '';
+                    return loadStatus();
+                }).finally(function () { Dashboard.hideLoadingMsg(); });
+            }
+
+            function loadSeerrUsers() {
+                var host = page.querySelector('#lumaraSeerrUsers');
+                host.textContent = 'Loading…';
+                json('GET', 'Lumara/Requests/Users').then(function (rows) {
+                    host.textContent = '';
+                    rows.forEach(function (u) {
+                        var row = el('div', 'paperList');
+                        row.style.cssText = 'padding:.75em 1em;margin-bottom:.5em;';
+                        var line = el('label');
+                        line.style.cssText = 'display:flex;gap:.75em;align-items:center;';
+                        if (!u.Linked && !u.Disabled) {
+                            var box = document.createElement('input');
+                            box.type = 'checkbox';
+                            box.value = u.UserId;
+                            box.className = 'lumaraImportBox';
+                            line.appendChild(box);
+                        }
+                        line.appendChild(el('strong', '', u.Name));
+                        var state = u.Linked
+                            ? (u.Permissions.length ? u.Permissions.join(', ') : 'No Seerr permissions') + (u.Requests ? ' \u00b7 ' + u.Requests + (u.Requests === 1 ? ' request' : ' requests') : '')
+                            : (u.Disabled ? 'Disabled in Jellyfin' : 'No Seerr account');
+                        line.appendChild(el('span', 'fieldDescription', state));
+                        row.appendChild(line);
+                        u.Warnings.forEach(function (w) { row.appendChild(el('div', 'fieldDescription', w)); });
+                        host.appendChild(row);
+                    });
+                    // Only offer the import when someone can be imported.
+                    page.querySelector('#lumaraImportUsers').style.display = page.querySelector('.lumaraImportBox') ? '' : 'none';
+                }, function () { host.textContent = 'Couldn\u2019t read Seerr\u2019s accounts. Test the Seerr connection above.'; });
+            }
+
+            page.addEventListener('pageshow', load);
+            page.querySelector('#lumaraSaveRequests').addEventListener('click', function () {
+                var result = page.querySelector('#lumaraRequestsResult');
+                json('PUT', 'Lumara/Requests/Settings', {
+                    AutoRequestNextSeason: page.querySelector('#lumaraAutoSeason').checked,
+                    AutoRequestNextMovie: page.querySelector('#lumaraAutoMovie').checked,
+                    CalendarForEveryone: page.querySelector('#lumaraCalendarAll').checked,
+                    CopyArrTags: page.querySelector('#lumaraCopyTags').checked,
+                    TagPrefix: page.querySelector('#lumaraTagPrefix').value
+                }).then(function () { result.textContent = ''; Dashboard.processPluginConfigurationUpdateResult(); },
+                        function () { result.textContent = 'Couldn\u2019t save. The tag prefix needs 1 to 20 characters.'; });
+            });
+            page.querySelector('#lumaraTagsNow').addEventListener('click', function () {
+                var result = page.querySelector('#lumaraRequestsResult');
+                result.textContent = 'Copying tags\u2026';
+                // dataType json: the reply carries the counts to show.
+                ApiClient.ajax({ type: 'POST', url: ApiClient.getUrl('Lumara/Arr/TagSync'), dataType: 'json' })
+                    .then(function (r) { result.textContent = r.Message; }, function () { result.textContent = 'Couldn\u2019t copy tags.'; });
+            });
+            page.querySelector('#lumaraImportUsers').addEventListener('click', function () {
+                var ids = Array.prototype.map.call(page.querySelectorAll('.lumaraImportBox:checked'), function (b) { return b.value; });
+                var result = page.querySelector('#lumaraSeerrUsersResult');
+                if (!ids.length) { result.textContent = 'Tick the people to add first.'; return; }
+                result.textContent = 'Adding\u2026';
+                ApiClient.ajax({ type: 'POST', url: ApiClient.getUrl('Lumara/Requests/Users/Import'), data: JSON.stringify({ UserIds: ids }), contentType: 'application/json', dataType: 'json' })
+                    .then(function (r) { result.textContent = r.Message; loadSeerrUsers(); }, function () { result.textContent = 'Couldn\u2019t add them. Check Seerr is set up for Jellyfin sign-in.'; });
+            });
+            page.querySelector('#lumaraWebMode').addEventListener('change', function (e) {
+                page.querySelector('#lumaraWebHint').textContent = hints[e.target.value] || '';
+            });
+            page.querySelector('#lumaraSaveWeb').addEventListener('click', function () {
+                json('PUT', 'Lumara/Web/Settings', {
+                    WebMode: page.querySelector('#lumaraWebMode').value,
+                    ShowStockButton: page.querySelector('#lumaraStockButton').checked
+                }).then(function () { Dashboard.processPluginConfigurationUpdateResult(); });
+            });
+            page.querySelector('#lumaraSaveMaint').addEventListener('click', function () {
+                var result = page.querySelector('#lumaraMaintResult');
+                json('PUT', 'Lumara/Maintenance', {
+                    Enabled: page.querySelector('#lumaraMaintOn').checked,
+                    Message: page.querySelector('#lumaraMaintMessage').value,
+                    StartUtc: fromLocalInput(page.querySelector('#lumaraMaintStart').value),
+                    EndUtc: fromLocalInput(page.querySelector('#lumaraMaintEnd').value),
+                    AnnounceMinutes: parseInt(page.querySelector('#lumaraMaintAnnounce').value, 10) || 0,
+                    LockOut: page.querySelector('#lumaraMaintLock').checked
+                }).then(function () { loadStatus(); Dashboard.processPluginConfigurationUpdateResult(); },
+                        function () { result.textContent = 'Couldn’t save. Check the end is after the start and the message is short enough.'; });
+            });
+            page.querySelector('#lumaraSaveBrand').addEventListener('click', function () {
+                json('PUT', 'Lumara/Branding', {
+                    Name: page.querySelector('#lumaraBrandName').value,
+                    Message: page.querySelector('#lumaraBrandMessage').value,
+                    Accent: page.querySelector('#lumaraBrandAccent').value
+                }).then(function () { Dashboard.processPluginConfigurationUpdateResult(); },
+                        function () { Dashboard.alert('Couldn’t save the branding.'); });
+            });
+            page.querySelector('#lumaraLogoUpload').addEventListener('click', function () {
+                var file = page.querySelector('#lumaraLogoFile').files[0];
+                var result = page.querySelector('#lumaraLogoResult');
+                if (!file) { result.textContent = 'Choose an image first.'; return; }
+                if (file.size > 512 * 1024) { result.textContent = 'That image is over 512 KB.'; return; }
+                result.textContent = 'Uploading…';
+                // The file goes up as-is; the server checks it really is an image.
+                ApiClient.ajax({ type: 'PUT', url: ApiClient.getUrl('Lumara/Branding/Logo'), data: file, contentType: file.type || 'application/octet-stream' })
+                    .then(function () { result.textContent = 'Logo saved.'; page.querySelector('#lumaraLogoFile').value = ''; loadStatus(); },
+                          function () { result.textContent = 'Couldn’t save that file. Use a PNG, JPEG or WebP image up to 512 KB.'; });
+            });
+            page.querySelector('#lumaraLogoRemove').addEventListener('click', function () {
+                if (!window.confirm('Remove the logo?')) return;
+                json('DELETE', 'Lumara/Branding/Logo').then(function () { page.querySelector('#lumaraLogoResult').textContent = 'Logo removed.'; loadStatus(); });
+            });
+            page.querySelector('#lumaraSaveDefaults').addEventListener('click', function () {
+                var text = page.querySelector('#lumaraDefaults').value.trim() || '{}';
+                try { JSON.parse(text); } catch (e) { Dashboard.alert('That isn’t valid JSON.'); return; }
+                ApiClient.ajax({ type: 'PUT', url: ApiClient.getUrl('Lumara/Defaults'), data: text, contentType: 'application/json' })
+                    .then(function () { Dashboard.processPluginConfigurationUpdateResult(); },
+                          function () { Dashboard.alert('Couldn’t save the defaults.'); });
+            });
+        })();
+    </script>
+</div>
+</body>
+</html>

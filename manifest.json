@@ -1,0 +1,29 @@
+[
+  {
+    "category": "General",
+    "description": "Hosts Lumara Web, syncs Lumara settings, brings Seerr requests, the *arr calendar and downloads to Lumara apps, and keeps every integration key on your server.",
+    "guid": "f71150e9-169e-45da-87d0-68dee97fd2e3",
+    "imageUrl": "https://raw.githubusercontent.com/gdavidson26/Lumara-Companion-Jellyfin/main/assets/thumb.png",
+    "name": "Lumara Companion",
+    "overview": "Lumara Web, Seerr requests, the *arr calendar and downloads, kept on your server",
+    "owner": "Lumara",
+    "versions": [
+      {
+        "changelog": "Release notes: https://github.com/gdavidson26/Lumara-Companion-Jellyfin/releases/tag/v1.0.0",
+        "checksum": "bdac4230b0f6c5b951825dd73f8b257d",
+        "sourceUrl": "https://github.com/gdavidson26/Lumara-Companion-Jellyfin/releases/download/v1.0.0/lumara-companion_1.0.0.12.zip",
+        "targetAbi": "12.0.0.0",
+        "timestamp": "2026-10-19T22:59:32Z",
+        "version": "1.0.0.12"
+      },
+      {
+        "changelog": "Release notes: https://github.com/gdavidson26/Lumara-Companion-Jellyfin/releases/tag/v1.0.0",
+        "checksum": "bbc12282bff9a65d3c5d09eb5aa22a92",
+        "sourceUrl": "https://github.com/gdavidson26/Lumara-Companion-Jellyfin/releases/download/v1.0.0/lumara-companion_1.0.0.11.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-10-19T22:59:33Z",
+        "version": "1.0.0.11"
+      }
+    ]
+  }
+]

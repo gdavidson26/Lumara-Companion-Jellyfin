@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Jellyfin.Plugin.LumaraCompanion.Tests/Jellyfin.Plugin.LumaraCompanion.Tests.csproj" />
+  <Project Path="Jellyfin.Plugin.LumaraCompanion/Jellyfin.Plugin.LumaraCompanion.csproj" />
+</Solution>
