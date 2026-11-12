@@ -12,9 +12,10 @@ namespace Jellyfin.Plugin.LumaraCompanion.Web;
 /// Locates and prepares the Lumara Web files shipped next to the plugin DLL.
 /// </summary>
 /// <remarks>
-/// Lumara Web is a separate, proprietary program. It's distributed as plain files
-/// in a <c>lumara-web</c> folder beside this DLL (never compiled into it), with its
-/// own license file, and this plugin only serves those files over HTTP.
+/// Lumara Web is a separate program under the Mozilla Public License 2.0. It's
+/// distributed as plain files in a <c>lumara-web</c> folder beside this DLL (never
+/// compiled into it), with its own license file, and this plugin only serves those
+/// files over HTTP.
 /// </remarks>
 public sealed class LumaraWebFiles
 {

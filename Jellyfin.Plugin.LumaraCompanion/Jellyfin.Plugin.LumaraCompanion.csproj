@@ -1,10 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    Lumara Companion for Jellyfin. GPL-3.0 (see ../LICENSE): Jellyfin plugins link
-    Jellyfin's GPL libraries. NEVER copy code from Lumara's proprietary Rust crates
-    into this project, and never embed the Lumara Web bundle into this DLL; the
-    plugin serves it as separate files from a `lumara-web` folder next to the DLL.
+    Lumara Companion for Jellyfin. GPL-3.0-only (see ../LICENSE): Jellyfin plugins
+    link Jellyfin's GPL-3.0-only libraries. Lumara Web (MPL-2.0) stays a separate
+    program: never embed its bundle into this DLL; the plugin serves it as separate
+    files from a `lumara-web` folder next to the DLL. Code ported here from Lumara's
+    MPL-2.0 Rust crates keeps its MPL notice (MPL 2.0 section 3.3 allows combining it
+    with GPL code).
 
     Two builds from one source:
       net10.0 -> Jellyfin 12.x  (Jellyfin.Controller 12.2.0)
@@ -19,7 +21,7 @@
          major it's built for (11 = 10.11, 12 = 12.x): Jellyfin installs the
          highest compatible version from a repository, so the 12 build must
          outrank the 10.11 build or a 12 server could pick the wrong DLL. -->
-    <VersionPrefix>1.0.1</VersionPrefix>
+    <VersionPrefix>1.0.2</VersionPrefix>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

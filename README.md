@@ -198,7 +198,8 @@ This plugin is free software under the **GNU GPL v3** (see [LICENSE](LICENSE)), 
 plugins link Jellyfin's GPL-3.0 libraries.
 
 **Lumara Web**, which the release zips include in a separate `lumara-web` folder, is a separate
-proprietary program with its own license (`lumara-web/LICENSE.txt`). It is not compiled into the
-plugin; the plugin serves its files over HTTP, and the GPL here does not extend to it.
+program under the Mozilla Public License 2.0 (`lumara-web/LICENSE.txt`), with the licenses of the
+libraries it bundles in `lumara-web/THIRD_PARTY_NOTICES/`. It is not compiled into the plugin; the
+plugin serves its files over HTTP. Its source is in the main Lumara repository.
 
 Lumara is not affiliated with Jellyfin, Seerr or the *arr projects.

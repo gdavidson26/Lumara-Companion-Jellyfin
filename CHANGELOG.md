@@ -5,6 +5,23 @@ All notable changes to Lumara Companion for Jellyfin, newest first. Versions fol
 [GitHub Releases](https://github.com/gdavidson26/Lumara-Companion-Jellyfin/releases) is tagged
 `v<version>` and has one zip per Jellyfin version (`.12` for Jellyfin 12, `.11` for 10.11).
 
+## 1.0.2 (2026-11-12)
+
+### Features
+
+- **Lumara Web recommendations:** The Lumara Web that comes with the plugin has three new Home rows built from what each person watches: Recommended for you, Because you watched, and Your kind of evening. They're worked out in the browser and kept there; nothing about them is stored on your server or sent anywhere else.
+
+### Improvements
+
+- **Licenses:** The Lumara Web files that come with the plugin are now open source under the Mozilla Public License 2.0, and the licenses of the libraries inside them are included.
+- **Catalogue picture:** The plugin's picture in Jellyfin's plugin catalogue shows the new Lumara logo.
+- **Lumara Web logo:** Lumara Web shows the new logo while it starts and signs you back in, and uses the L mark in its top bar, browser tab and home-screen icon.
+
+### Fixes
+
+- **Lumara Web lists:** Hiding a title, turning on Spoiler Guard or saving a bookmark from a poster's menu is now saved to your server, so a hidden title no longer comes back after a reload.
+- **Lumara Web spelling:** "Favorites" is spelled the same way everywhere.
+
 ## 1.0.1 (2026-10-19)
 
 ### Fixes
