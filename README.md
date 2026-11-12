@@ -12,7 +12,7 @@ on TVs, phones and browsers only ever talk to your Jellyfin server.
 
 [Install](#install) · [What it does](#what-it-does) · [Integrations](#integrations) ·
 [Privacy and security](#privacy-and-security) · [Troubleshooting](#troubleshooting) ·
-[Building](#building-from-source) · [License](#license)
+[Building](#building-from-source) · [License](#license) · [Changelog](CHANGELOG.md)
 
 ## Install
 
@@ -32,7 +32,10 @@ You need Jellyfin **10.11.x** or **12.x** and an admin account.
 4. Open **Dashboard → Plugins → Lumara Companion → Settings** and choose how Lumara Web should appear (see
    below). Nothing changes for your users until you do.
 
-Updates show up on the same Plugins page, and Jellyfin can install them automatically.
+Updates show up on the same Plugins page, and Jellyfin can install them automatically: it checks
+when it starts and then once a day (the Update Plugins task under Dashboard → Scheduled Tasks),
+and the new version runs after the next restart. What changed in each version is in the
+[changelog](CHANGELOG.md).
 
 **Manual install:** download the zip for your server from
 [Releases](https://github.com/gdavidson26/Lumara-Companion-Jellyfin/releases)
